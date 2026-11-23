@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Services\AuditService;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +41,11 @@ class LoginRequest extends FormRequest
         // Akun terkunci: tolak walaupun kata sandi benar
         if ($user && $user->isLocked()) {
             RateLimiter::hit($this->throttleKey());
-            // TODO (A7): AuditService::log($user->id, 'LOGIN_FAILED', 'akun terkunci');
+            AuditService::log($user->id, AuditService::LOGIN_FAILED, [
+                'alasan' => 'akun terkunci',
+                'ip'     => $this->ip(),
+            ]);
+
             throw $this->failure();
         }
 
@@ -49,10 +54,27 @@ class LoginRequest extends FormRequest
 
             if ($user) {
                 $justLocked = $user->registerFailedLogin();
-                // TODO (A7): AuditService::log($user->id, 'LOGIN_FAILED', 'kata sandi salah');
-                // TODO (A7): if ($justLocked) AuditService::log($user->id, 'ACCOUNT_LOCKED', 'gagal login berulang');
+
+                AuditService::log($user->id, AuditService::LOGIN_FAILED, [
+                    'alasan' => 'kata sandi salah',
+                    'ip'     => $this->ip(),
+                ]);
+
+                if ($justLocked) {
+                    AuditService::log($user->id, AuditService::ACCOUNT_LOCKED, [
+                        'gagal_berturut'  => $user->failed_attempts,
+                        'terkunci_sampai' => $user->locked_until?->toDateTimeString(),
+                        'ip'              => $this->ip(),
+                    ]);
+                }
             } else {
-                // TODO (A7): AuditService::log(null, 'LOGIN_FAILED', 'username tidak dikenal: '.$this->input('username'));
+                // Pelaku tidak dikenal. Username dipotong karena orang kadang salah mengetik
+                // kata sandi di kolom username.
+                AuditService::log(null, AuditService::LOGIN_FAILED, [
+                    'alasan'   => 'username tidak dikenal',
+                    'username' => Str::limit((string) $this->input('username'), 50),
+                    'ip'       => $this->ip(),
+                ]);
             }
 
             throw $this->failure();
@@ -60,7 +82,7 @@ class LoginRequest extends FormRequest
 
         RateLimiter::clear($this->throttleKey());
         Auth::user()->resetFailedLogin();
-        // TODO (A7): AuditService::log(Auth::id(), 'LOGIN_SUCCESS');
+        AuditService::log(Auth::id(), AuditService::LOGIN_SUCCESS, ['ip' => $this->ip()]);
     }
 
     public function ensureIsNotRateLimited(): void

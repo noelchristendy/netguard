@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\AuditService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,8 @@ class EnsureRole
         // Akun dikunci (mis. oleh Administrator) saat sesinya masih aktif:
         // keluarkan pada request berikutnya, tanpa menunggu sesi habis.
         if ($user->isLocked()) {
+            AuditService::log($user->id, AuditService::LOGOUT, ['alasan' => 'akun dikunci saat sesi aktif']);
+
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -39,7 +42,12 @@ class EnsureRole
 
         // Gagal tertutup: tanpa daftar peran, atau peran tidak cocok, tolak.
         if ($roles === [] || ! in_array($user->role?->name, $roles, true)) {
-            // TODO (A7, opsional): AuditService::log($user->id, 'ACCESS_DENIED', $request->method().' '.$request->path());
+            AuditService::log($user->id, AuditService::ACCESS_DENIED, [
+                'peran'  => $user->role?->name,
+                'metode' => $request->method(),
+                'path'   => '/'.ltrim($request->path(), '/'),
+            ]);
+
             abort(403);
         }
 
