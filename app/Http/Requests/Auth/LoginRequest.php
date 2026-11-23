@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -12,52 +12,57 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
-{
-    return [
-        'username' => ['required', 'string'],
-        'password' => ['required', 'string'],
-    ];
-}
-
-public function authenticate(): void
-{
-    $this->ensureIsNotRateLimited();
-
-    if (! Auth::attempt($this->only('username', 'password'))) {
-        RateLimiter::hit($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'username' => 'Username atau kata sandi salah.',
-        ]);
+    {
+        return [
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ];
     }
 
-    RateLimiter::clear($this->throttleKey());
-}
-
-public function throttleKey(): string
-{
-    return Str::transliterate(Str::lower($this->string('username')).'|'.$this->ip());
-}
-
     /**
-     * Ensure the login request is not rate limited.
-     *
-     * @throws ValidationException
+     * Urutan pemeriksaan:
+     * 1. pembatas laju bawaan (cache), 2. akun terkunci di database,
+     * 3. kredensial. Semua kegagalan memakai pesan yang SAMA supaya
+     * penyerang tidak bisa mengetahui username mana yang valid atau terkunci.
      */
+    public function authenticate(): void
+    {
+        $this->ensureIsNotRateLimited();
+
+        $user = User::where('username', $this->input('username'))->first();
+
+        // Akun terkunci: tolak walaupun kata sandi benar
+        if ($user && $user->isLocked()) {
+            RateLimiter::hit($this->throttleKey());
+            // TODO (A7): AuditService::log($user->id, 'LOGIN_FAILED', 'akun terkunci');
+            throw $this->failure();
+        }
+
+        if (! Auth::attempt($this->only('username', 'password'))) {
+            RateLimiter::hit($this->throttleKey());
+
+            if ($user) {
+                $justLocked = $user->registerFailedLogin();
+                // TODO (A7): AuditService::log($user->id, 'LOGIN_FAILED', 'kata sandi salah');
+                // TODO (A7): if ($justLocked) AuditService::log($user->id, 'ACCOUNT_LOCKED', 'gagal login berulang');
+            } else {
+                // TODO (A7): AuditService::log(null, 'LOGIN_FAILED', 'username tidak dikenal: '.$this->input('username'));
+            }
+
+            throw $this->failure();
+        }
+
+        RateLimiter::clear($this->throttleKey());
+        Auth::user()->resetFailedLogin();
+        // TODO (A7): AuditService::log(Auth::id(), 'LOGIN_SUCCESS');
+    }
+
     public function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
@@ -69,10 +74,19 @@ public function throttleKey(): string
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'username' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'username' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
+        ]);
+    }
+
+    public function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->string('username')).'|'.$this->ip());
+    }
+
+    private function failure(): ValidationException
+    {
+        return ValidationException::withMessages([
+            'username' => 'Username atau kata sandi salah, atau akun terkunci sementara.',
         ]);
     }
 }
