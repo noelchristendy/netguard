@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,18 @@ Route::middleware(['auth', Role::allow(...Role::AUDIT_VIEWERS)])
     ->group(function () {
         Route::get('/logs/audits', [LogController::class, 'audits'])
             ->name('logs.audits');
+    });
+
+Route::middleware(['auth', Role::allow(...Role::ALL)])
+    ->group(function () {
+        Route::get('/export/decisions', [ExportController::class, 'decisions'])
+            ->name('export.decisions');
+    });
+
+Route::middleware(['auth', Role::allow(...Role::AUDIT_VIEWERS)])
+    ->group(function () {
+        Route::get('/export/audits', [ExportController::class, 'audits'])
+            ->name('export.audits');
     });
 
 Route::middleware(['auth', Role::allow(...Role::USER_MANAGERS)])

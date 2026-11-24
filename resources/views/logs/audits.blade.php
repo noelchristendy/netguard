@@ -91,6 +91,30 @@
                         </a>
                     </div>
                 </form>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    @php
+                        $exportFilters = request()->only([
+                            'date_from',
+                            'date_to',
+                            'action',
+                            'actor',
+                        ]);
+                    @endphp
+
+                    <a
+                        href="{{ route('export.audits', array_merge($exportFilters, ['format' => 'csv'])) }}"
+                        class="px-4 py-2 bg-green-700 text-white rounded-md text-sm hover:bg-green-800"
+                    >
+                        Export CSV
+                    </a>
+
+                    <a
+                        href="{{ route('export.audits', array_merge($exportFilters, ['format' => 'pdf'])) }}"
+                        class="px-4 py-2 bg-red-700 text-white rounded-md text-sm hover:bg-red-800"
+                    >
+                        Export PDF
+                    </a>
+                </div>
             </div>
 
             <!-- Tabel Audit -->
