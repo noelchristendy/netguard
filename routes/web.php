@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Models\Role;
+use App\Http\Controllers\RuleController;
 
 Route::get('/', fn () => redirect()->route('login'));
 
@@ -22,4 +23,9 @@ Route::middleware(['auth', Role::allow(...Role::USER_MANAGERS)])
         Route::post('/{user}/unlock', [UserController::class, 'unlock'])->name('unlock');
     });
 
+Route::middleware(['auth', Role::allow(...Role::RULE_MANAGERS)])->group(function () {
+    Route::patch('rules/{rule}/toggle', [RuleController::class, 'toggle'])->name('rules.toggle');
+    Route::post('rules/{rule}/move', [RuleController::class, 'move'])->name('rules.move');
+    Route::resource('rules', RuleController::class)->except(['show']);
+});
 require __DIR__.'/auth.php';
