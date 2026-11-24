@@ -15,16 +15,6 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
 
             {{-- Pesan sementara. Hapus blok ini bila layout utama (N1) sudah menampilkan flash message. --}}
-            @if (session('success'))
-                <div class="border rounded-md px-4 py-3 text-sm bg-green-50 text-green-800 border-green-300">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="border rounded-md px-4 py-3 text-sm bg-red-50 text-red-800 border-red-300">
-                    {{ session('error') }}
-                </div>
-            @endif
             @if ($errors->any())
                 <div class="border rounded-md px-4 py-3 text-sm bg-red-50 text-red-800 border-red-300">
                     <ul class="list-disc ml-5">

@@ -81,7 +81,7 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
-        Auth::user()->resetFailedLogin();
+        $user?->resetFailedLogin();
         AuditService::log(Auth::id(), AuditService::LOGIN_SUCCESS, ['ip' => $this->ip()]);
     }
 

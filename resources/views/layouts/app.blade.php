@@ -29,6 +29,17 @@
 
             <!-- Page Content -->
             <main>
+                @if (session('success') || session('error'))
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-2">
+                        @if (session('success'))
+                            <x-alert type="success">{{ session('success') }}</x-alert>
+                        @endif
+                        @if (session('error'))
+                            <x-alert type="error">{{ session('error') }}</x-alert>
+                        @endif
+                    </div>
+                @endif
+
                 {{ $slot }}
             </main>
         </div>
