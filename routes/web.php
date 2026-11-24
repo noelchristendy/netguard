@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -7,8 +8,8 @@ use App\Models\Role;
 
 Route::get('/', fn () => redirect()->route('login'));
 
-Route::get('/dashboard', fn () => view('dashboard'))
-    ->middleware('auth')
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', Role::allow(...Role::ALL)])
     ->name('dashboard');
 
 Route::middleware(['auth', Role::allow(...Role::ALL)])
