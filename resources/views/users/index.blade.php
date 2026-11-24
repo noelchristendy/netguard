@@ -13,30 +13,7 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-
-            {{-- Pesan sementara. Hapus blok ini bila layout utama (N1) sudah menampilkan flash message. --}}
-            @if (session('success'))
-                <div class="border rounded-md px-4 py-3 text-sm bg-green-50 text-green-800 border-green-300">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="border rounded-md px-4 py-3 text-sm bg-red-50 text-red-800 border-red-300">
-                    {{ session('error') }}
-                </div>
-            @endif
-            @if ($errors->any())
-                <div class="border rounded-md px-4 py-3 text-sm bg-red-50 text-red-800 border-red-300">
-                    <ul class="list-disc ml-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <div class="overflow-x-auto bg-white shadow-sm sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <x-table>
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-2 text-left font-semibold text-gray-600">Username</th>
@@ -105,8 +82,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                </table>
-            </div>
+            </x-table>
         </div>
     </div>
 </x-app-layout>

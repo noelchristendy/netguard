@@ -26,7 +26,39 @@
                     </div>
                 </header>
             @endisset
+            <!-- Flash Messages -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-3">
+                @if (session('success'))
+                    <x-alert type="success">
+                        {{ session('success') }}
+                    </x-alert>
+                @endif
 
+                @if (session('error'))
+                    <x-alert type="error">
+                        {{ session('error') }}
+                    </x-alert>
+                @endif
+
+                @if ($errors->any())
+                    <x-alert type="error">
+                        <p class="font-semibold mb-2">
+                            Terdapat kesalahan pada input:
+                        </p>
+
+                        <ul class="list-disc ml-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </x-alert>
+                @endif
+            </div>
+
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
             <!-- Page Content -->
             <main>
                 {{ $slot }}
