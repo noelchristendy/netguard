@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Models\Role;
 use App\Http\Controllers\RuleController;
+use App\Http\Controllers\FilterController;
 
 Route::get('/', fn () => redirect()->route('login'));
 
@@ -27,5 +28,10 @@ Route::middleware(['auth', Role::allow(...Role::RULE_MANAGERS)])->group(function
     Route::patch('rules/{rule}/toggle', [RuleController::class, 'toggle'])->name('rules.toggle');
     Route::post('rules/{rule}/move', [RuleController::class, 'move'])->name('rules.move');
     Route::resource('rules', RuleController::class)->except(['show']);
+
+    Route::get('filter', [FilterController::class, 'index'])->name('filter.index');
+    Route::post('filter/upload', [FilterController::class, 'upload'])->name('filter.upload');
+    Route::post('filter/single', [FilterController::class, 'single'])->name('filter.single');
 });
+
 require __DIR__.'/auth.php';
