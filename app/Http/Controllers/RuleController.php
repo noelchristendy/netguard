@@ -26,7 +26,7 @@ class RuleController extends Controller
     public function index(): View
     {
         return view('rules.index', [
-            'rules' => Rule::orderBy('priority')->get(),
+            'rules' => Rule::with('creator')->orderBy('priority')->get(),
         ]);
     }
 
