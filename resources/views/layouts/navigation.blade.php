@@ -1,120 +1,447 @@
 @use('App\Models\Role')
+
 @php
     $role = Auth::user()->role->name;
 
-    // [label, nama route, peran yang boleh melihat, pola route untuk status aktif]
+    // Menu dan hak akses tetap mengikuti backend asli.
     $menus = [
-        ['Dashboard',      'dashboard',      Role::ALL,            'dashboard'],
-        ['Manajemen Rule', 'rules.index',    Role::RULE_MANAGERS,  'rules.*'],
-        ['Penyaringan',    'filter.index',   Role::RULE_MANAGERS,  'filter.*'],
-        ['Log Keputusan',  'logs.decisions', Role::ALL,            'logs.decisions'],
-        ['Log Audit',      'logs.audits',    Role::AUDIT_VIEWERS,  'logs.audits'],
-        ['Pengguna',       'users.index',    Role::USER_MANAGERS,  'users.*'],
+        ['Dashboard', 'dashboard', Role::ALL, 'dashboard'],
+        ['Manajemen Rule', 'rules.index', Role::RULE_MANAGERS, 'rules.*'],
+        ['Penyaringan', 'filter.index', Role::RULE_MANAGERS, 'filter.*'],
+        ['Log Keputusan', 'logs.decisions', Role::ALL, 'logs.decisions'],
+        ['Log Audit', 'logs.audits', Role::AUDIT_VIEWERS, 'logs.audits'],
+        ['Pengguna', 'users.index', Role::USER_MANAGERS, 'users.*'],
     ];
 
-    // Menu hanya tampilan. Keamanan sebenarnya ada di middleware EnsureRole.
-    // Route::has() membuat menu muncul otomatis begitu rutenya dibuat.
+    // Menu yang ditampilkan sesuai role dan route yang tersedia.
     $visibleMenus = collect($menus)->filter(
         fn ($m) => in_array($role, $m[2], true) && Route::has($m[1])
     );
+
+    $roleClass = match (strtolower($role)) {
+        'administrator' => 'role-administrator',
+        'operator' => 'role-operator',
+        'auditor' => 'role-auditor',
+        default => 'role-operator',
+    };
 @endphp
 
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="font-bold text-lg text-gray-800">
-                        NetGuard
-                    </a>
-                </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    @foreach ($visibleMenus as [$label, $route, $roles, $pattern])
-                        <x-nav-link :href="route($route)" :active="request()->routeIs($pattern)">
-                            {{ $label }}
-                        </x-nav-link>
-                    @endforeach
-                </div>
-            </div>
+{{-- ========================================= --}}
+{{-- NETGUARD SIDEBAR --}}
+{{-- ========================================= --}}
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div class="text-start">
-                                <div>{{ Auth::user()->username }}</div>
-                                <div class="text-xs text-gray-400 capitalize">{{ $role }}</div>
-                            </div>
+<aside
+    class="ng-sidebar"
+    :class="{ 'is-open': sidebarOpen }"
+    aria-label="Main navigation"
+>
 
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
+    {{-- SIDEBAR HEADER --}}
+    <div class="ng-sidebar-head">
 
-                    <x-slot name="content">
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
+        <a href="{{ route('dashboard') }}" class="ng-brand">
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
+            <span class="ng-brand-mark">
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
+                <svg
+                    width="23"
+                    height="23"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                </svg>
+
+            </span>
+
+            <span>
+                <span class="ng-brand-name">NetGuard</span>
+
+                <span class="ng-brand-caption">
+                    SECURITY CONSOLE
+                </span>
+            </span>
+
+        </a>
+
+
+        {{-- DESKTOP COLLAPSE --}}
+        <button
+            type="button"
+            class="ng-collapse-button"
+            @click="sidebarCollapsed = !sidebarCollapsed"
+            aria-label="Collapse or expand sidebar"
+            title="Collapse sidebar"
+        >
+            <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <path d="M9 3v18"/>
+            </svg>
+        </button>
+
+
+        {{-- MOBILE CLOSE --}}
+        <button
+            type="button"
+            class="ng-mobile-close"
+            @click="sidebarOpen = false"
+            aria-label="Close navigation"
+        >
+            <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+                <path d="m18 6-12 12M6 6l12 12"/>
+            </svg>
+        </button>
+
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            @foreach ($visibleMenus as [$label, $route, $roles, $pattern])
-                <x-responsive-nav-link :href="route($route)" :active="request()->routeIs($pattern)">
+
+    {{-- ========================================= --}}
+    {{-- NAVIGATION LINKS --}}
+    {{-- ========================================= --}}
+
+    <div class="ng-sidebar-section">
+        Workspace
+    </div>
+
+    <nav class="ng-sidebar-nav">
+
+        @foreach ($visibleMenus as [$label, $route, $roles, $pattern])
+
+            <a
+                href="{{ route($route) }}"
+                class="ng-sidebar-link {{ request()->routeIs($pattern) ? 'is-active' : '' }}"
+                :title="sidebarCollapsed ? '{{ $label }}' : ''"
+                @click="sidebarOpen = false"
+                @if(request()->routeIs($pattern))
+                    aria-current="page"
+                @endif
+            >
+
+                <span class="ng-sidebar-icon">
+
+                    @switch($route)
+
+                        {{-- DASHBOARD --}}
+                        @case('dashboard')
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <rect x="3" y="3" width="8" height="8" rx="2"/>
+                                <rect x="13" y="3" width="8" height="5" rx="2"/>
+                                <rect x="13" y="10" width="8" height="11" rx="2"/>
+                                <rect x="3" y="13" width="8" height="8" rx="2"/>
+                            </svg>
+
+                            @break
+
+
+                        {{-- RULE MANAGEMENT --}}
+                        @case('rules.index')
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M4 6h16M4 12h16M4 18h16"/>
+                                <circle cx="9" cy="6" r="1"/>
+                                <circle cx="15" cy="12" r="1"/>
+                                <circle cx="7" cy="18" r="1"/>
+                            </svg>
+
+                            @break
+
+
+                        {{-- FILTER --}}
+                        @case('filter.index')
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M4 5h16l-6.5 7.5V19l-3 1v-7.5L4 5z"/>
+                            </svg>
+
+                            @break
+
+
+                        {{-- DECISION LOG --}}
+                        @case('logs.decisions')
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M3 12h4l3-8 4 16 3-8h4"/>
+                            </svg>
+
+                            @break
+
+
+                        {{-- AUDIT LOG --}}
+                        @case('logs.audits')
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <rect x="4" y="3" width="16" height="18" rx="2"/>
+                                <path d="M8 8h8M8 12h8M8 16h5"/>
+                            </svg>
+
+                            @break
+
+
+                        {{-- USER MANAGEMENT --}}
+                        @case('users.index')
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M20 8v6M23 11h-6"/>
+                            </svg>
+
+                            @break
+
+                    @endswitch
+
+                </span>
+
+
+                <span class="ng-sidebar-label">
                     {{ $label }}
-                </x-responsive-nav-link>
-            @endforeach
-        </div>
+                </span>
 
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->username }}</div>
-                <div class="font-medium text-sm text-gray-500 capitalize">{{ $role }}</div>
-            </div>
 
-            <div class="mt-3 space-y-1">
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
+                {{-- ACTIVE INDICATOR --}}
+                @if(request()->routeIs($pattern))
+
+                    <span
+                        class="ml-auto"
+                        style="
+                            width: 5px;
+                            height: 5px;
+                            background: #38bdf8;
+                            border-radius: 50%;
+                        "
+                    ></span>
+
+                @endif
+
+            </a>
+
+        @endforeach
+
+    </nav>
+
+
+    {{-- ========================================= --}}
+    {{-- SIDEBAR FOOTER / PROFILE --}}
+    {{-- ========================================= --}}
+
+    <div class="ng-sidebar-footer">
+
+        <div class="ng-profile-wrap">
+
+
+            {{-- PROFILE BUTTON --}}
+            <button
+                type="button"
+                class="ng-user-card ng-profile-trigger"
+                @click="profileOpen = !profileOpen"
+                :aria-expanded="profileOpen"
+                aria-label="User profile menu"
+            >
+
+                {{-- AVATAR --}}
+                <span class="ng-user-avatar">
+                    {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
+                </span>
+
+
+                {{-- USER INFORMATION --}}
+                <span class="ng-user-meta">
+
+                    <span class="ng-user-name">
+                        {{ Auth::user()->username }}
+                    </span>
+
+                    <span class="role-chip {{ $roleClass }}">
+                        {{ ucfirst(strtolower($role)) }}
+                    </span>
+
+                </span>
+
+
+                {{-- CHEVRON --}}
+                <svg
+                    class="ng-profile-chevron"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    :style="profileOpen ? 'transform:rotate(180deg)' : ''"
+                >
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+
+            </button>
+
+
+            {{-- PROFILE DROPDOWN --}}
+            <div
+                class="ng-profile-menu"
+                x-show="profileOpen"
+                x-cloak
+                x-transition:enter="transition ease-out duration-150"
+                x-transition:enter-start="opacity-0 translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-100"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                @click.outside="profileOpen = false"
+            >
+
+                <div class="ng-profile-menu-heading">
+                    ACCOUNT
+                </div>
+
+
+                <div
+                    style="
+                        padding: 6px 9px 12px;
+                        border-bottom: 1px solid #30363d;
+                    "
+                >
+                    <div style="
+                        color: #e6edf3;
+                        font-weight: 600;
+                        font-size: 13px;
+                    ">
+                        {{ Auth::user()->username }}
+                    </div>
+
+                    <div style="
+                        color: #8b949e;
+                        font-size: 11px;
+                        margin-top: 3px;
+                    ">
+                        {{ ucfirst(strtolower($role)) }}
+                    </div>
+                </div>
+
+
+                {{-- LOGOUT --}}
+                <form
+                    method="POST"
+                    action="{{ route('logout') }}"
+                >
                     @csrf
 
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                    <button
+                        type="submit"
+                        @click="profileOpen = false"
+                    >
+
+                        <svg
+                            width="17"
+                            height="17"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <path d="M16 17l5-5-5-5"/>
+                            <path d="M21 12H9"/>
+                        </svg>
+
+                        Logout
+
+                    </button>
+
                 </form>
+
             </div>
+
         </div>
+
+
+        {{-- SYSTEM INFORMATION --}}
+        <div class="ng-logout-button">
+
+            <span class="ng-sidebar-icon">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                >
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 11v5M12 8h.01"/>
+                </svg>
+            </span>
+
+            <span class="ng-logout-label">
+                Network Security
+            </span>
+
+        </div>
+
     </div>
-</nav>
+
+</aside>

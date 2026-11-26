@@ -1,3 +1,1591 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ==========================================
+   1. NETGUARD DESIGN SYSTEM
+========================================== */
+
+:root {
+    color-scheme: dark;
+
+    --ng-bg: #14171a;
+    --ng-surface: #1f2328;
+    --ng-raised: #23272e;
+    --ng-hover: #2b313a;
+
+    --ng-border: #30363d;
+
+    --ng-text: #e6edf3;
+    --ng-muted: #8b949e;
+
+    --ng-blue: #38bdf8;
+    --ng-green: #34d399;
+    --ng-red: #fb7185;
+    --ng-amber: #fbbf24;
+
+    --ng-radius: 10px;
+}
+
+/* Alpine cloak */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Global */
+html {
+    scroll-behavior: smooth;
+}
+
+body,
+.netguard-theme {
+    background: var(--ng-bg);
+    color: var(--ng-text);
+    font-family: Figtree, sans-serif;
+}
+
+.netguard-theme ::selection {
+    background: rgba(56, 189, 248, .28);
+    color: white;
+}
+
+.netguard-theme :focus-visible {
+    outline: 2px solid var(--ng-blue);
+    outline-offset: 2px;
+}
+
+/* ==========================================
+   2. GLOBAL DARK THEME
+========================================== */
+
+.netguard-theme .bg-white {
+    background: var(--ng-surface) !important;
+}
+
+.netguard-theme .bg-gray-50 {
+    background: var(--ng-raised) !important;
+}
+
+.netguard-theme .bg-gray-100 {
+    background: var(--ng-bg) !important;
+}
+
+.netguard-theme .text-gray-900,
+.netguard-theme .text-gray-800 {
+    color: var(--ng-text) !important;
+}
+
+.netguard-theme .text-gray-700,
+.netguard-theme .text-gray-600 {
+    color: #c9d1d9 !important;
+}
+
+.netguard-theme .text-gray-500,
+.netguard-theme .text-gray-400 {
+    color: var(--ng-muted) !important;
+}
+
+.netguard-theme .border,
+.netguard-theme .border-gray-100,
+.netguard-theme .border-gray-200,
+.netguard-theme .border-gray-300 {
+    border-color: var(--ng-border) !important;
+}
+
+.netguard-theme .bg-gray-800 {
+    background: var(--ng-blue) !important;
+}
+
+.netguard-theme .hover\:bg-gray-700:hover {
+    background: #0ea5e9 !important;
+}
+
+.netguard-theme .text-indigo-600,
+.netguard-theme .text-indigo-700 {
+    color: #79c0ff !important;
+}
+
+/* Status colors */
+
+.netguard-theme .bg-green-100 {
+    background: rgba(52, 211, 153, .13) !important;
+}
+
+.netguard-theme .text-green-800,
+.netguard-theme .text-green-700 {
+    color: #6ee7b7 !important;
+}
+
+.netguard-theme .bg-red-100 {
+    background: rgba(251, 113, 133, .13) !important;
+}
+
+.netguard-theme .text-red-800,
+.netguard-theme .text-red-700 {
+    color: #fda4af !important;
+}
+
+.netguard-theme .bg-yellow-100 {
+    background: rgba(251, 191, 36, .13) !important;
+}
+
+.netguard-theme .text-yellow-800,
+.netguard-theme .text-yellow-700 {
+    color: #fcd34d !important;
+}
+
+/* ==========================================
+   3. FORM ELEMENTS
+========================================== */
+
+.netguard-theme input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.netguard-theme select,
+.netguard-theme textarea {
+    color: var(--ng-text);
+    background: #171c21;
+    border: 1px solid var(--ng-border);
+    border-radius: 8px;
+}
+
+.netguard-theme input::placeholder,
+.netguard-theme textarea::placeholder {
+    color: #6e7681;
+}
+
+.netguard-theme input:focus,
+.netguard-theme select:focus,
+.netguard-theme textarea:focus {
+    border-color: var(--ng-blue) !important;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, .12) !important;
+}
+
+.netguard-theme input[type="checkbox"],
+.netguard-theme input[type="radio"] {
+    accent-color: var(--ng-blue);
+}
+
+.netguard-theme label {
+    color: #c5d0dc;
+}
+
+.netguard-theme input[type="file"] {
+    color: var(--ng-muted);
+}
+
+/* ==========================================
+   4. TABLE
+========================================== */
+
+.netguard-theme table {
+    width: 100%;
+    color: var(--ng-text);
+    border-color: var(--ng-border);
+}
+
+.netguard-theme thead {
+    background: var(--ng-raised) !important;
+}
+
+.netguard-theme thead th {
+    color: #aab4bf !important;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.netguard-theme tbody tr {
+    transition: background .2s ease;
+}
+
+.netguard-theme tbody tr:hover {
+    background: var(--ng-hover) !important;
+}
+
+.netguard-theme tbody td {
+    border-color: var(--ng-border) !important;
+}
+
+/* ==========================================
+   5. APPLICATION LAYOUT
+========================================== */
+
+.netguard-shell {
+    min-height: 100vh;
+    background: var(--ng-bg);
+}
+
+/* Sidebar */
+
+.ng-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 70;
+
+    display: flex;
+    width: 264px;
+    height: 100vh;
+    height: 100dvh;
+
+    flex-direction: column;
+    overflow: hidden;
+
+    background: #1b2026;
+    border-right: 1px solid var(--ng-border);
+
+    transition: width .2s ease, transform .24s ease;
+}
+
+/* Sidebar Header */
+
+.ng-sidebar-head {
+    display: flex;
+    min-height: 78px;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 18px;
+
+    border-bottom: 1px solid var(--ng-border);
+}
+
+.ng-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    color: var(--ng-text);
+    text-decoration: none;
+}
+
+.ng-brand-mark {
+    display: grid;
+
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+
+    place-items: center;
+
+    color: white;
+    background: #182e3a;
+
+    border: 1px solid rgba(56, 189, 248, .28);
+    border-radius: 9px;
+}
+
+.ng-brand-name {
+    font-size: 1.08rem;
+    font-weight: 750;
+    letter-spacing: -.035em;
+}
+
+.ng-brand-caption {
+    display: block;
+
+    color: var(--ng-muted);
+    font-size: .65rem;
+    letter-spacing: .09em;
+}
+
+/* Sidebar buttons */
+
+.ng-collapse-button,
+.ng-mobile-close {
+    display: inline-grid;
+
+    width: 32px;
+    height: 32px;
+
+    place-items: center;
+
+    color: var(--ng-muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.ng-collapse-button:hover,
+.ng-mobile-close:hover {
+    color: white;
+    background: var(--ng-hover);
+}
+
+.ng-mobile-close {
+    display: none;
+}
+
+/* Navigation section */
+
+.ng-sidebar-section {
+    padding: 22px 18px 8px;
+
+    color: #697582;
+    font-size: .64rem;
+    font-weight: 650;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.ng-sidebar-nav {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 4px 12px 18px;
+}
+
+/* Navigation item */
+
+.ng-sidebar-link {
+    position: relative;
+
+    display: flex;
+    min-height: 44px;
+
+    align-items: center;
+    gap: 13px;
+
+    margin: 3px 0;
+    padding: 0 12px;
+
+    color: #a6b0bb;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    font-size: .84rem;
+    text-decoration: none;
+
+    transition: .2s ease;
+}
+
+.ng-sidebar-link:hover {
+    color: var(--ng-text);
+    background: #242b33;
+}
+
+.ng-sidebar-link.is-active {
+    color: #b9efff;
+
+    background: rgba(56, 189, 248, .08);
+
+    border-color: rgba(56, 189, 248, .18);
+}
+
+.ng-sidebar-link.is-active::before {
+    position: absolute;
+
+    top: 9px;
+    bottom: 9px;
+    left: -1px;
+
+    width: 3px;
+
+    background: var(--ng-blue);
+    border-radius: 4px;
+
+    content: "";
+}
+
+.ng-sidebar-icon {
+    display: inline-grid;
+
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+
+    place-items: center;
+}
+
+.ng-sidebar-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.ng-sidebar-label {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Sidebar Footer */
+
+.ng-sidebar-footer {
+    padding: 14px 12px 16px;
+    border-top: 1px solid var(--ng-border);
+}
+
+.ng-profile-wrap {
+    position: relative;
+}
+
+.ng-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 9px 8px 12px;
+}
+
+.ng-profile-trigger {
+    width: 100%;
+
+    color: inherit;
+    text-align: left;
+
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.ng-profile-trigger:hover {
+    background: var(--ng-hover);
+}
+
+.ng-profile-chevron {
+    margin-left: auto;
+    color: var(--ng-muted);
+    transition: transform .2s ease;
+}
+
+/* Profile */
+
+.ng-user-avatar {
+    display: grid;
+
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+
+    place-items: center;
+
+    color: #dbeafe;
+    background: #263b56;
+
+    border: 1px solid rgba(88, 166, 255, .25);
+    border-radius: 50%;
+
+    font-size: .8rem;
+    font-weight: 750;
+}
+
+.ng-user-meta {
+    min-width: 0;
+    flex: 1;
+}
+
+.ng-user-name {
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--ng-text);
+    font-size: .78rem;
+    font-weight: 650;
+
+    text-overflow: ellipsis;
+}
+
+.role-chip {
+    display: inline-flex;
+
+    margin-top: 4px;
+    padding: 2px 7px;
+
+    border-radius: 999px;
+
+    font-size: .62rem;
+    font-weight: 700;
+}
+
+.role-administrator {
+    color: #d2a8ff;
+    background: rgba(163, 113, 247, .14);
+}
+
+.role-operator {
+    color: #79c0ff;
+    background: rgba(56, 139, 253, .14);
+}
+
+.role-auditor {
+    color: #eac54f;
+    background: rgba(210, 153, 34, .14);
+}
+
+/* Profile dropdown */
+
+.ng-profile-menu {
+    position: absolute;
+
+    right: 6px;
+    bottom: 68px;
+    left: 6px;
+
+    z-index: 10;
+
+    padding: 8px;
+
+    background: var(--ng-raised);
+
+    border: 1px solid var(--ng-border);
+    border-radius: 10px;
+
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .36);
+}
+
+.ng-profile-menu-heading {
+    padding: 7px 9px;
+
+    color: var(--ng-muted);
+    font-size: .68rem;
+}
+
+.ng-profile-menu button {
+    display: flex;
+    width: 100%;
+
+    align-items: center;
+    gap: 9px;
+
+    padding: 9px;
+
+    color: #fda4af;
+    background: transparent;
+
+    border: 0;
+    border-radius: 7px;
+
+    cursor: pointer;
+}
+
+.ng-profile-menu button:hover {
+    background: rgba(251, 113, 133, .09);
+}
+
+.ng-logout-button {
+    display: flex;
+    width: 100%;
+
+    align-items: center;
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    color: var(--ng-muted);
+    background: transparent;
+
+    border: 0;
+    border-radius: 8px;
+
+    text-align: left;
+    cursor: pointer;
+}
+
+.ng-logout-button:hover {
+    color: #fda4af;
+    background: rgba(251, 113, 133, .08);
+}
+
+/* Mobile backdrop */
+
+.ng-sidebar-backdrop {
+    display: none;
+}
+
+/* ==========================================
+   6. COLLAPSED SIDEBAR
+========================================== */
+
+.app-main {
+    min-height: 100vh;
+    margin-left: 264px;
+
+    transition: margin-left .2s ease;
+}
+
+.sidebar-collapsed .ng-sidebar {
+    width: 84px;
+}
+
+.sidebar-collapsed .app-main {
+    margin-left: 84px;
+}
+
+/* Hide text when collapsed */
+
+.sidebar-collapsed .ng-brand-name,
+.sidebar-collapsed .ng-brand-caption,
+.sidebar-collapsed .ng-sidebar-section,
+.sidebar-collapsed .ng-sidebar-label,
+.sidebar-collapsed .ng-user-meta,
+.sidebar-collapsed .ng-logout-label {
+    display: none;
+}
+
+/* Preserve collapse button */
+
+.sidebar-collapsed .ng-sidebar-head {
+    padding-left: 8px;
+    padding-right: 8px;
+    gap: 4px;
+}
+
+.sidebar-collapsed .ng-brand {
+    gap: 0;
+}
+
+.sidebar-collapsed .ng-brand-mark {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+}
+
+.sidebar-collapsed .ng-sidebar-link,
+.sidebar-collapsed .ng-user-card {
+    justify-content: center;
+}
+
+.sidebar-collapsed .ng-sidebar-link {
+    padding: 0;
+}
+
+.sidebar-collapsed .ng-profile-menu {
+    right: auto;
+    bottom: 0;
+    left: calc(100% + 10px);
+    width: 218px;
+}
+
+/* ==========================================
+   7. TOPBAR
+========================================== */
+
+.app-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+
+    background: rgba(20, 23, 26, .94);
+
+    border-bottom: 1px solid var(--ng-border);
+
+    backdrop-filter: blur(14px);
+}
+
+.app-topbar-inner {
+    display: flex;
+
+    min-height: 82px;
+    max-width: 1680px;
+
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+
+    margin: 0 auto;
+    padding: 14px 28px;
+}
+
+.app-topbar-left {
+    display: flex;
+
+    min-width: 0;
+
+    align-items: center;
+    gap: 14px;
+}
+
+.app-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-page-heading h2 {
+    margin: 0;
+
+    color: var(--ng-text);
+    font-size: 1.18rem;
+    font-weight: 720;
+}
+
+.app-topbar-meta {
+    color: var(--ng-muted);
+    font-size: .76rem;
+}
+
+.app-content {
+    max-width: 1680px;
+
+    margin: 0 auto;
+    padding: 0 28px 36px;
+
+    animation: ng-page-enter .28s ease both;
+}
+
+.app-footer {
+    padding: 0 28px 22px;
+
+    color: #68727d;
+    font-size: .7rem;
+}
+
+/* Mobile menu button */
+
+.ng-mobile-menu-button {
+    display: none;
+
+    width: 38px;
+    height: 38px;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #c5d0dc;
+    background: var(--ng-surface);
+
+    border: 1px solid var(--ng-border);
+    border-radius: 7px;
+}
+
+/* System status */
+
+.ng-period-chip {
+    display: inline-flex;
+
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 11px;
+
+    color: #aebdca;
+    background: var(--ng-surface);
+
+    border: 1px solid var(--ng-border);
+    border-radius: 7px;
+
+    font-size: .72rem;
+}
+
+.ng-period-dot {
+    width: 6px;
+    height: 6px;
+
+    background: var(--ng-blue);
+    border-radius: 50%;
+}
+
+/* ==========================================
+   8. TOAST NOTIFICATION
+========================================== */
+
+.ng-toast-stack {
+    position: fixed;
+
+    top: 96px;
+    right: 24px;
+
+    z-index: 100;
+
+    display: grid;
+    width: min(420px, calc(100vw - 32px));
+
+    gap: 10px;
+
+    pointer-events: none;
+}
+
+.ng-toast {
+    display: flex;
+
+    align-items: flex-start;
+    gap: 11px;
+
+    padding: 14px;
+
+    color: var(--ng-text);
+    background: var(--ng-surface);
+
+    border: 1px solid var(--ng-border);
+    border-radius: 9px;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+
+    font-size: .84rem;
+
+    pointer-events: auto;
+}
+
+.ng-toast-icon {
+    display: inline-grid;
+
+    width: 20px;
+    height: 20px;
+
+    place-items: center;
+}
+
+.ng-toast-message {
+    flex: 1;
+    line-height: 1.45;
+}
+
+.ng-toast-close {
+    color: var(--ng-muted);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.ng-toast-success {
+    border-left: 2px solid var(--ng-green);
+}
+
+.ng-toast-error {
+    border-left: 2px solid var(--ng-red);
+}
+
+/* ==========================================
+   9. BUTTON LOADING STATE
+========================================== */
+
+.netguard-theme button.is-loading {
+    cursor: progress;
+    opacity: .78;
+}
+
+.netguard-theme button.is-loading::after {
+    display: inline-block;
+
+    width: 13px;
+    height: 13px;
+
+    margin-left: 9px;
+
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+
+    border-radius: 50%;
+
+    animation: ng-spin .7s linear infinite;
+
+    content: "";
+}
+
+/* ==========================================
+   10. LOGIN PAGE
+========================================== */
+
+.guest-shell {
+    display: flex;
+
+    min-height: 100vh;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 44px 20px;
+
+    background: var(--ng-bg);
+}
+
+.guest-brand {
+    display: flex;
+
+    flex-direction: column;
+    align-items: center;
+
+    margin-bottom: 26px;
+}
+
+.guest-brand-mark {
+    display: grid;
+
+    width: 54px;
+    height: 54px;
+
+    place-items: center;
+
+    margin-bottom: 12px;
+
+    color: white;
+    background: #182e3a;
+
+    border: 1px solid rgba(56, 189, 248, .28);
+    border-radius: 12px;
+}
+
+.guest-brand-name {
+    color: var(--ng-text);
+
+    font-size: 1.55rem;
+    font-weight: 780;
+}
+
+.guest-brand-subtitle {
+    margin-top: 4px;
+
+    color: var(--ng-muted);
+    font-size: .82rem;
+}
+
+.guest-card {
+    width: 100%;
+    max-width: 430px;
+
+    padding: 30px;
+
+    background: var(--ng-surface);
+
+    border: 1px solid var(--ng-border);
+    border-radius: 12px;
+}
+
+.guest-footnote {
+    margin-top: 22px;
+
+    color: #68727d;
+    font-size: .7rem;
+}
+
+/* ==========================================
+   11. DASHBOARD
+========================================== */
+
+.ng-dashboard {
+    display: grid;
+
+    gap: 18px;
+
+    padding: 22px 0 8px;
+}
+
+/* Dashboard heading */
+
+.ng-dashboard-head {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.ng-eyebrow {
+    margin: 0 0 7px;
+
+    color: var(--ng-blue);
+
+    font-size: .66rem;
+    font-weight: 700;
+    letter-spacing: .13em;
+}
+
+.ng-dashboard-title {
+    margin: 0;
+
+    color: var(--ng-text);
+
+    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    font-weight: 700;
+}
+
+.ng-dashboard-description {
+    margin-top: 7px;
+
+    color: var(--ng-muted);
+    font-size: .86rem;
+}
+
+/* Statistics grid */
+
+.ng-stats-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+.ng-stat-card {
+    display: flex;
+
+    min-width: 0;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 12px;
+    padding: 19px 20px;
+
+    background: var(--ng-surface);
+
+    border: 1px solid var(--ng-border);
+    border-radius: 10px;
+
+    transition: .2s ease;
+}
+
+.ng-stat-card:hover {
+    background: #242a30;
+    border-color: #3b5263;
+
+    transform: translateY(-2px);
+}
+
+.ng-stat-label {
+    margin: 0;
+
+    color: var(--ng-muted);
+    font-size: .76rem;
+}
+
+.ng-stat-value {
+    margin: 9px 0 3px;
+
+    color: var(--ng-text);
+
+    font-size: clamp(1.65rem, 3vw, 2rem);
+    font-weight: 720;
+
+    font-variant-numeric: tabular-nums;
+}
+
+.ng-stat-note {
+    margin: 8px 0 0;
+
+    color: #758493;
+    font-size: .7rem;
+}
+
+/* Statistics icons */
+
+.ng-stat-icon {
+    display: grid;
+
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+
+    place-items: center;
+
+    border: 1px solid currentColor;
+    border-radius: 8px;
+}
+
+.ng-stat-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.ng-stat-icon.is-allow {
+    color: var(--ng-green);
+    background: rgba(52, 211, 153, .08);
+}
+
+.ng-stat-icon.is-deny {
+    color: var(--ng-red);
+    background: rgba(251, 113, 133, .08);
+}
+
+.ng-stat-icon.is-log {
+    color: var(--ng-amber);
+    background: rgba(251, 191, 36, .08);
+}
+
+/* Dashboard panels */
+
+.ng-panel {
+    min-width: 0;
+
+    overflow: hidden;
+
+    background: var(--ng-surface);
+
+    border: 1px solid var(--ng-border);
+    border-radius: 10px;
+}
+
+.ng-panel-head {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    padding: 17px 19px;
+
+    border-bottom: 1px solid var(--ng-border);
+}
+
+.ng-panel-title {
+    margin: 0;
+
+    color: var(--ng-text);
+    font-size: .9rem;
+    font-weight: 650;
+}
+
+.ng-panel-description {
+    margin: 5px 0 0;
+
+    color: var(--ng-muted);
+    font-size: .73rem;
+}
+
+/* Chart */
+
+.ng-chart-wrap {
+    position: relative;
+
+    height: 300px;
+
+    padding: 18px;
+}
+
+/* Dashboard table */
+
+.ng-table-wrap {
+    overflow-x: auto;
+}
+
+.ng-data-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: .8rem;
+}
+
+.ng-data-table thead th {
+    padding: 12px 17px;
+
+    color: var(--ng-muted);
+
+    background: var(--ng-raised);
+
+    border-bottom: 1px solid var(--ng-border);
+
+    font-size: .65rem;
+    text-align: left;
+}
+
+.ng-data-table tbody td {
+    padding: 13px 17px;
+
+    color: #cbd5df;
+
+    border-bottom: 1px solid var(--ng-border);
+}
+
+.ng-data-table tbody tr:hover {
+    background: rgba(56, 189, 248, .035);
+}
+
+.ng-rank {
+    display: inline-grid;
+
+    width: 25px;
+    height: 25px;
+
+    place-items: center;
+
+    color: #aab7c4;
+
+    background: var(--ng-hover);
+
+    border: 1px solid #3a424b;
+    border-radius: 6px;
+}
+
+.ng-rule-name {
+    color: var(--ng-text);
+    font-weight: 620;
+}
+
+.ng-rule-description {
+    color: var(--ng-muted);
+}
+
+.ng-table-total {
+    color: var(--ng-text);
+    font-weight: 650;
+    text-align: right;
+}
+
+.ng-empty {
+    padding: 34px 18px !important;
+
+    color: var(--ng-muted) !important;
+    text-align: center;
+}
+
+/* ==========================================
+   12. ANIMATIONS
+========================================== */
+
+@keyframes ng-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ng-page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================
+   13. RESPONSIVE TABLET
+========================================== */
+
+@media (max-width: 1023px) {
+
+    .ng-sidebar {
+        width: min(300px, 88vw);
+
+        transform: translateX(-105%);
+    }
+
+    .ng-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    .ng-sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+
+        z-index: 60;
+
+        display: block;
+
+        background: rgba(5, 8, 12, .62);
+
+        backdrop-filter: blur(4px);
+    }
+
+    .ng-mobile-close {
+        display: inline-grid;
+    }
+
+    .ng-collapse-button {
+        display: none;
+    }
+
+    .app-main,
+    .sidebar-collapsed .app-main {
+        margin-left: 0;
+    }
+
+    .sidebar-collapsed .ng-sidebar {
+        width: min(300px, 88vw);
+    }
+
+    .sidebar-collapsed .ng-brand-name,
+    .sidebar-collapsed .ng-brand-caption,
+    .sidebar-collapsed .ng-sidebar-section,
+    .sidebar-collapsed .ng-sidebar-label,
+    .sidebar-collapsed .ng-user-meta,
+    .sidebar-collapsed .ng-logout-label {
+        display: initial;
+    }
+
+    .sidebar-collapsed .ng-sidebar-link {
+        justify-content: flex-start;
+        padding: 0 12px;
+    }
+
+    .ng-mobile-menu-button {
+        display: inline-flex;
+    }
+
+    .app-topbar-inner {
+        min-height: 72px;
+
+        padding: 12px 18px;
+    }
+
+    .app-topbar-meta {
+        display: none;
+    }
+
+    .app-content {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+}
+
+/* ==========================================
+   14. RESPONSIVE SMALL TABLET
+========================================== */
+
+@media (max-width: 800px) {
+
+    .ng-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ng-stats-grid .ng-stat-card:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ==========================================
+   15. RESPONSIVE MOBILE
+========================================== */
+
+@media (max-width: 560px) {
+
+    .app-topbar-inner {
+        padding: 13px 14px;
+    }
+
+    .app-content {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .app-footer {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .ng-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ng-stats-grid .ng-stat-card:last-child {
+        grid-column: auto;
+    }
+
+    .ng-stat-card {
+        padding: 15px;
+    }
+
+    .ng-chart-wrap {
+        height: 250px;
+
+        padding: 12px 8px;
+    }
+
+    .ng-toast-stack {
+        top: 82px;
+        right: 12px;
+
+        width: calc(100vw - 24px);
+    }
+
+    .guest-shell {
+        justify-content: flex-start;
+
+        padding-top: 13vh;
+    }
+
+    .guest-card {
+        padding: 22px;
+    }
+
+    .ng-dashboard-head {
+        align-items: flex-start;
+    }
+
+    .ng-panel-head {
+        padding: 14px;
+    }
+
+    .ng-data-table {
+        min-width: 600px;
+    }
+}
+
+/* ==========================================
+   16. ACCESSIBILITY
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+
+        transition-duration: .01ms !important;
+
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* ==========================================
+   NETGUARD NATURAL UI REFINEMENT
+========================================== */
+
+/* 1. Lebarkan area halaman */
+
+@media (min-width: 1024px) {
+    #main-content .max-w-7xl,
+    #main-content .max-w-6xl,
+    #main-content .max-w-5xl {
+        max-width: 1400px !important;
+    }
+}
+
+#main-content .py-12 {
+    padding-top: 28px !important;
+    padding-bottom: 28px !important;
+}
+
+/* 2. Informational alert */
+
+.netguard-theme .bg-blue-50,
+.netguard-theme .bg-blue-100,
+.netguard-theme .bg-sky-50,
+.netguard-theme .bg-indigo-50 {
+    color: #c9d1d9 !important;
+    background: #1c2933 !important;
+    border: 1px solid #294454 !important;
+    border-left: 3px solid #38bdf8 !important;
+    border-radius: 8px !important;
+}
+
+.netguard-theme .text-blue-700,
+.netguard-theme .text-blue-800,
+.netguard-theme .text-indigo-800 {
+    color: #a9dff5 !important;
+}
+
+.netguard-theme .bg-blue-50 a,
+.netguard-theme .bg-blue-100 a {
+    color: #79c0ff !important;
+}
+
+/* 3. Card refinement */
+
+.netguard-theme .rounded-lg.shadow-sm {
+    border: 1px solid #30363d !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    transition: border-color .2s ease,
+                background .2s ease;
+}
+
+.netguard-theme .rounded-lg.shadow-sm:hover {
+    border-color: #394b58 !important;
+}
+
+/* 4. Table divider */
+
+.netguard-theme table {
+    border-collapse: collapse !important;
+    border: 1px solid #30363d !important;
+}
+
+.netguard-theme table th,
+.netguard-theme table td {
+    border-bottom: 1px solid #30363d !important;
+    border-top: 0 !important;
+}
+
+.netguard-theme .divide-y > :not([hidden]) ~ :not([hidden]) {
+    border-color: #30363d !important;
+}
+
+.netguard-theme tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+
+/* 5. Table action links */
+
+.netguard-theme table td a {
+    text-decoration: none !important;
+    transition: color .2s ease,
+                background .2s ease;
+}
+
+.netguard-theme table td a:hover {
+    color: #38bdf8 !important;
+}
+
+/* 6. Form inputs */
+
+.netguard-theme input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.netguard-theme select,
+.netguard-theme textarea {
+    min-height: 40px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    transition: border-color .2s ease,
+                box-shadow .2s ease;
+}
+
+/* 7. Buttons */
+
+.netguard-theme button,
+.netguard-theme .btn {
+    transition: background .2s ease,
+                border-color .2s ease,
+                transform .15s ease;
+}
+
+.netguard-theme button:active {
+    transform: scale(.98);
+}
+
+/* 8. File upload */
+
+.netguard-theme input[type="file"] {
+    max-width: 100%;
+    padding: 8px;
+    border-radius: 7px;
+    background: #171c21;
+}
+
+.netguard-theme input[type="file"]::file-selector-button {
+    padding: 7px 12px;
+    margin-right: 10px;
+    color: #c9d1d9;
+    background: #2b313a;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* 9. Consistent spacing in cards */
+
+.netguard-theme .rounded-lg.shadow-sm > div {
+    min-width: 0;
+}
+
+/* 10. Responsive refinement */
+
+@media (max-width: 768px) {
+    #main-content .max-w-7xl,
+    #main-content .max-w-6xl,
+    #main-content .max-w-5xl {
+        width: 100%;
+    }
+
+    #main-content .py-12 {
+        padding-top: 18px !important;
+        padding-bottom: 18px !important;
+    }
+}
